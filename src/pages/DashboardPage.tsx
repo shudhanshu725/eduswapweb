@@ -420,6 +420,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, onPageChange
                     <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Full Name</label>
                     <input 
                       type="text" 
+                      placeholder="Full Name"
                       defaultValue={user.displayName || ''} 
                       className="w-full px-4 py-3 rounded-xl bg-surface-container border-none focus:ring-2 focus:ring-primary"
                       readOnly
@@ -429,6 +430,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, onPageChange
                     <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email Address</label>
                     <input 
                       type="email" 
+                      placeholder="Email Address"
                       defaultValue={user.email || ''} 
                       className="w-full px-4 py-3 rounded-xl bg-surface-container border-none focus:ring-2 focus:ring-primary"
                       readOnly
