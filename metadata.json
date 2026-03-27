@@ -1,0 +1,5 @@
+{
+  "name": "EduSwap",
+  "description": "A peer-to-peer platform for college students to exchange, sell, or donate study materials like notes, papers, and PDFs.",
+  "requestFramePermissions": []
+}
