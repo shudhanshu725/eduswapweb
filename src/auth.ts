@@ -10,6 +10,21 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
+export interface EmailAuthResult {
+  requiresEmailConfirmation: boolean;
+}
+
+const EMAIL_VERIFICATION_ERROR =
+  'Email verify nahi hua hai. Inbox me confirmation link open karke phir login karo.';
+
+function isEmailVerified(user: User | null | undefined) {
+  return Boolean(user?.email_confirmed_at);
+}
+
+async function signOutSilently() {
+  await supabase.auth.signOut();
+}
+
 async function upsertUserProfile(userId: string, displayName: string) {
   if (!userId || !displayName) return;
   try {
@@ -34,7 +49,7 @@ async function upsertUserProfile(userId: string, displayName: string) {
 }
 
 // Email Signup
-export async function signUpWithEmail(name: string, email: string, password: string) {
+export async function signUpWithEmail(name: string, email: string, password: string): Promise<EmailAuthResult> {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -50,34 +65,23 @@ export async function signUpWithEmail(name: string, email: string, password: str
   if (data.user?.id) {
     await upsertUserProfile(data.user.id, name);
   }
-  if (data.session) return data;
-
-  // If email confirmation is enabled in Supabase, signUp won't return a session.
-  // Try immediate login for "direct signup" UX.
-  const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  if (loginError || !loginData.session) {
-    throw new Error(
-      'Direct signup blocked: turn OFF "Confirm email" in Supabase -> Authentication -> Providers -> Email.'
-    );
-  }
-  if (loginData.user?.id) {
-    await upsertUserProfile(loginData.user.id, name);
-  }
-
-  return loginData;
+  return {
+    requiresEmailConfirmation: !data.session,
+  };
 }
 
 // Email Login
-export async function signInWithEmail(email: string, password: string) {
+export async function signInWithEmail(email: string, password: string): Promise<EmailAuthResult> {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) throw error;
+  if (!isEmailVerified(data.user)) {
+    await signOutSilently();
+    throw new Error(EMAIL_VERIFICATION_ERROR);
+  }
   if (data.user?.id) {
     const displayName =
       String(data.user.user_metadata?.full_name || data.user.user_metadata?.name || '').trim() ||
@@ -86,7 +90,9 @@ export async function signInWithEmail(email: string, password: string) {
       await upsertUserProfile(data.user.id, displayName);
     }
   }
-  return data;
+  return {
+    requiresEmailConfirmation: false,
+  };
 }
 
 // Logout
@@ -99,6 +105,10 @@ export async function logout() {
 export async function getCurrentUser(): Promise<User | null> {
   const { data, error } = await supabase.auth.getUser();
   if (error) throw error;
+  if (!isEmailVerified(data.user)) {
+    await signOutSilently();
+    return null;
+  }
   return data.user;
 }
 
@@ -106,6 +116,12 @@ export async function getCurrentUser(): Promise<User | null> {
 export async function getSession(): Promise<Session | null> {
   const { data, error } = await supabase.auth.getSession();
   if (error) throw error;
+  if (!isEmailVerified(data.session?.user)) {
+    if (data.session) {
+      await signOutSilently();
+    }
+    return null;
+  }
   return data.session;
 }
 
@@ -116,6 +132,11 @@ export function onAuthStateChanged(
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((event, session) => {
+    if (session?.user && !isEmailVerified(session.user)) {
+      void signOutSilently();
+      callback(event, null);
+      return;
+    }
     callback(event, session);
   });
 

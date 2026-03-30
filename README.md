@@ -42,6 +42,7 @@ EduSwap uses Supabase Auth signup email flow.
    ```
 
 After this, every new signup gets the welcome + account-created email automatically.
+When `Confirm email` is enabled, signup will create the account and ask the user to verify their email before first login.
 
 ## MERN Backend (New)
 

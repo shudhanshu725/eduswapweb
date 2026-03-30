@@ -45,14 +45,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, initialMode = 'log
     try {
       if (mode === 'login') {
         await signInWithEmail(email.trim(), password.trim());
+        resetAndClose(true);
       } else {
         if (!name.trim()) {
           setError('Name is required');
           return;
         }
-        await signUpWithEmail(name.trim(), email.trim(), password.trim());
+        const result = await signUpWithEmail(name.trim(), email.trim(), password.trim());
+        if (result.requiresEmailConfirmation) {
+          setNotice('Account created. Please check your email and confirm your account before logging in.');
+          setMode('login');
+          setPassword('');
+          return;
+        }
+        resetAndClose(true);
       }
-      resetAndClose(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Authentication failed');
     } finally {

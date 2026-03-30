@@ -1,38 +1,38 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
+@theme {
   --font-headline: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-  
+
   --color-primary: #0058ba;
   --color-primary-dim: #004da4;
   --color-primary-container: #6c9fff;
   --color-on-primary: #f0f2ff;
-  
+
   --color-secondary: #6d3fbe;
   --color-secondary-dim: #6031b2;
   --color-secondary-container: #dcc9ff;
   --color-on-secondary: #f8efff;
-  
+
   --color-tertiary: #00694c;
   --color-tertiary-container: #6affc9;
   --color-on-tertiary-container: #006045;
-  
+
   --color-background: #f7f5ff;
   --color-surface: #f7f5ff;
+  --color-surface-variant: #eef1ff;
   --color-on-surface: #232c51;
   --color-on-surface-variant: #505a81;
-  
+
   --color-surface-container: #e4e7ff;
   --color-surface-container-low: #efefff;
   --color-surface-container-high: #dde1ff;
   --color-surface-container-highest: #d5dbff;
   --color-surface-container-lowest: #ffffff;
-  
+
   --color-outline: #6c759e;
   --color-outline-variant: #a2abd7;
+  --color-error: #dc2626;
 }
 
 @layer base {
