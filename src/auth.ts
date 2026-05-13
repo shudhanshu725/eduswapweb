@@ -26,6 +26,8 @@ const BLOCKED_EMAIL_DOMAINS = new Set([
   'yopmail.com',
 ]);
 
+const ALLOWED_EMAIL_DOMAINS = new Set(['gmail.com', 'googlemail.com']);
+
 function isEmailVerified(user: User | null | undefined) {
   return Boolean(user?.email_confirmed_at);
 }
@@ -43,6 +45,10 @@ function validateEmailAddress(email: string) {
   }
 
   const domain = normalizedEmail.split('@')[1];
+  if (!ALLOWED_EMAIL_DOMAINS.has(domain)) {
+    throw new Error('Only Gmail addresses are allowed. Please use your Gmail account.');
+  }
+
   if (BLOCKED_EMAIL_DOMAINS.has(domain)) {
     throw new Error('Temporary/fake email addresses are not allowed.');
   }

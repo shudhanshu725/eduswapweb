@@ -7,6 +7,7 @@ This project uses a React frontend with Supabase for auth, database, realtime ch
 ## Features
 
 - Email signup and login with Supabase Auth
+- Gmail-only signup/login
 - Email confirmation before login
 - Browse student listings
 - Upload sell, swap, donate, PDF resource, and question paper listings
@@ -114,7 +115,7 @@ EduSwap uses Supabase Auth signup email flow.
    <p>Thanks,<br />EduSwap Team</p>
    ```
 
-After signup, users must confirm their email before they can log in. Supabase may still show an unconfirmed Auth user before verification; that is normal. EduSwap does not create the user's app profile until the email is verified and the user can log in. The app also validates email format and blocks common temporary email domains, but inbox confirmation is the real protection.
+After signup, users must confirm their email before they can log in. Supabase may still show an unconfirmed Auth user before verification; that is normal. EduSwap does not create the user's app profile until the email is verified and the user can log in. The app only allows Gmail addresses and also validates email format, but inbox confirmation is the real protection.
 
 ## Environment Variables
 
