@@ -58,6 +58,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, initialMode = 'log
           setPassword('');
           return;
         }
+        setNotice('Account created successfully. You can now use EduSwap.');
         resetAndClose(true);
       }
     } catch (err: unknown) {

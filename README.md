@@ -77,7 +77,7 @@ Before running the project, install or create:
 
 4. Go to `Authentication` -> `Providers`.
 5. Enable the Email provider.
-6. Keep email confirmation enabled if you want users to verify email before login.
+6. Keep `Confirm email` enabled so users must verify their inbox before login.
 
 The schema creates these required resources:
 
@@ -90,34 +90,27 @@ The schema creates these required resources:
 - `contact_messages`
 - Storage bucket: `materials`
 
-## Auth Email Setup
-
-EduSwap uses Supabase Auth signup email confirmation flow.
+## Auth Setup
 
 1. Go to Supabase Dashboard -> `Authentication` -> `Providers`.
 2. Enable `Email`.
-3. Keep `Confirm email` enabled. This is required so users cannot log in with an unverified or fake inbox.
-4. Go to `Authentication` -> `Email Templates` -> `Confirm signup`.
-5. Use a subject like:
+3. Keep `Confirm email` enabled.
+4. If you added custom SMTP while testing, you can disable/remove it. Supabase's default email sender will send confirmation links, but it has free-plan rate limits.
+5. Go to `Authentication` -> `Notifications` -> `Email` -> `Confirm signup`.
+6. Use `{{ .ConfirmationURL }}` in the template so Supabase sends a clickable confirmation link.
 
-   ```text
-   Welcome to EduSwap - Confirm your account
-   ```
+Example confirm signup body:
 
-6. Example email body:
+```html
+<h2>Welcome to EduSwap</h2>
+<p>Hello,</p>
+<p>Your account has been created successfully.</p>
+<p>Please confirm your email by clicking the button below.</p>
+<p><a href="{{ .ConfirmationURL }}">Confirm my account</a></p>
+<p>Thanks,<br />EduSwap Team</p>
+```
 
-   ```html
-   <h2>Welcome to EduSwap</h2>
-   <p>Hello,</p>
-   <p>Your account has been created successfully.</p>
-   <p>Please confirm your email by clicking the button below.</p>
-   <p><a href="{{ .ConfirmationURL }}">Confirm my account</a></p>
-   <p>Thanks,<br />EduSwap Team</p>
-   ```
-
-Use `{{ .ConfirmationURL }}` so Supabase sends a clickable confirmation link.
-
-After signup, users must confirm their email before they can log in. Supabase may still show an unconfirmed Auth user before verification; that is normal. EduSwap does not create the user's app profile until the email is verified and the user can log in. The app only allows Gmail addresses and also validates email format, but inbox confirmation is the real protection.
+With this setup, signup creates a pending Supabase Auth user, then the user must click the confirmation link before login. EduSwap only creates the app profile after verified login. The app only allows `gmail.com` and `googlemail.com` addresses.
 
 ## Environment Variables
 

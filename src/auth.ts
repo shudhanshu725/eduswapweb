@@ -56,10 +56,6 @@ function validateEmailAddress(email: string) {
   return normalizedEmail;
 }
 
-async function signOutSilently() {
-  await supabase.auth.signOut();
-}
-
 async function upsertUserProfile(userId: string, displayName: string) {
   if (!userId || !displayName) return;
   try {
@@ -81,6 +77,10 @@ async function upsertUserProfile(userId: string, displayName: string) {
   } catch {
     // Keep auth flow resilient even if profile table is not yet configured.
   }
+}
+
+async function signOutSilently() {
+  await supabase.auth.signOut();
 }
 
 // Email Signup
