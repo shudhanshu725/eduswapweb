@@ -1,65 +1,211 @@
 # EduSwap
 
-College item exchange platform for VBSPU students.
+EduSwap is a college item exchange platform for VBSPU students. Students can create an account, list items or academic resources, browse available listings, download shared PDFs, contact other students, and manage their own uploads from a dashboard.
 
-## Run Locally
+This project uses a React frontend with Supabase for auth, database, realtime chat data, and file storage. It does not require a MERN backend, MongoDB, Express API, JWT server auth, or Socket.IO server.
 
-Prerequisites: Node.js 18+
+## Features
+
+- Email signup and login with Supabase Auth
+- Email confirmation before login
+- Browse student listings
+- Upload sell, swap, donate, PDF resource, and question paper listings
+- Upload PDF files to Supabase Storage
+- Direct chat between students using Supabase tables/realtime
+- Dashboard for uploads, downloads, and sales
+- Contact details for phone, WhatsApp, Instagram, and Telegram
+- Row Level Security policies included in `supabase/schema.sql`
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Supabase JS
+- Lucide React
+- Motion
+
+## Requirements
+
+Before running the project, install or create:
+
+- Node.js 18 or newer
+- npm
+- A Supabase project
+- Supabase project URL
+- Supabase anon public key
+
+## Local Setup
 
 1. Install dependencies:
-   `npm install`
-2. Create `.env.local`:
+
+   ```bash
+   npm install
+   ```
+
+2. Create `.env.local` in the project root:
+
    ```env
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
-3. Start dev server:
-   `npm run dev`
-4. Open:
-   `http://localhost:3000`
 
-## Welcome Email Setup (Signup)
+3. Start the local dev server:
 
-EduSwap uses Supabase Auth signup email flow.
-
-1. Go to Supabase Dashboard -> `Authentication` -> `Providers`.
-2. Enable `Email` provider and keep `Confirm email` enabled.
-3. Go to `Authentication` -> `Email Templates` -> `Confirm signup`.
-4. Use subject:
-   `Welcome to EduSwap - Your account is ready`
-5. Use message body like:
-   ```html
-   <h2>Welcome to EduSwap</h2>
-   <p>Hello,</p>
-   <p>Your account has been created successfully.</p>
-   <p>Please confirm your email by clicking the button below.</p>
-   <p><a href="{{ .ConfirmationURL }}">Confirm my account</a></p>
-   <p>Thanks,<br/>EduSwap Team</p>
+   ```bash
+   npm run dev
    ```
 
-After this, every new signup gets the welcome + account-created email automatically.
-When `Confirm email` is enabled, signup will create the account and ask the user to verify their email before first login.
+4. Open the app:
+
+   ```text
+   http://localhost:3000
+   ```
 
 ## Supabase Setup
 
-This project uses Supabase only. It does not need MongoDB, Express, JWT server auth, or a separate API server.
+1. Open your Supabase project.
+2. Go to `SQL Editor`.
+3. Run the SQL from:
 
-1. Create a Supabase project.
-2. Copy `.env.example` to `.env.local`.
-3. Set:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_project_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```text
+   supabase/schema.sql
    ```
-4. In Supabase SQL Editor, run `supabase/schema.sql`.
-5. In Supabase Dashboard -> `Authentication` -> `Providers`, enable Email auth.
 
-The app expects these Supabase tables/storage resources:
+4. Go to `Authentication` -> `Providers`.
+5. Enable the Email provider.
+6. Keep email confirmation enabled if you want users to verify email before login.
+
+The schema creates these required resources:
+
+- `user_profiles`
 - `materials`
 - `downloads`
 - `swap_requests`
 - `messages`
 - `purchases`
 - `contact_messages`
-- `user_profiles`
 - Storage bucket: `materials`
+
+## Auth Email Setup
+
+EduSwap uses Supabase Auth signup email flow.
+
+1. Go to Supabase Dashboard -> `Authentication` -> `Providers`.
+2. Enable `Email`.
+3. Keep `Confirm email` enabled.
+4. Go to `Authentication` -> `Email Templates` -> `Confirm signup`.
+5. Use a subject like:
+
+   ```text
+   Welcome to EduSwap - Confirm your account
+   ```
+
+6. Example email body:
+
+   ```html
+   <h2>Welcome to EduSwap</h2>
+   <p>Hello,</p>
+   <p>Your account has been created successfully.</p>
+   <p>Please confirm your email by clicking the button below.</p>
+   <p><a href="{{ .ConfirmationURL }}">Confirm my account</a></p>
+   <p>Thanks,<br />EduSwap Team</p>
+   ```
+
+After signup, users must confirm their email before they can log in.
+
+## Environment Variables
+
+Required variables:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+These are frontend-safe Supabase values. Do not put Supabase service role keys in this React app.
+
+## Available Scripts
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Check TypeScript:
+
+```bash
+npm run lint
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+Clean the build folder on Windows:
+
+```bash
+npm run clean
+```
+
+## Project Structure
+
+```text
+src/
+  auth.ts                  Supabase client and auth helpers
+  App.tsx                  App routes and auth state
+  main.tsx                 React entry point
+  types.ts                 Shared TypeScript types
+  supabase.types.ts        Supabase table types
+  components/              Shared UI components
+  contexts/                React context providers
+  pages/                   App pages
+supabase/
+  schema.sql               Database, RLS, and storage setup
+```
+
+## Important Notes
+
+- This project is Supabase-only.
+- The app needs `.env.local` before it can run correctly.
+- Uploads require the `materials` storage bucket and storage policies from `supabase/schema.sql`.
+- Chat requires the `messages` table and RLS policies from `supabase/schema.sql`.
+- If uploads fail, check Supabase Storage bucket policies first.
+- If browsing shows no data, check the `materials` table and RLS select policy.
+- If login fails after signup, confirm the user email from the inbox or Supabase dashboard.
+
+## Deployment
+
+For Vercel or another static hosting provider:
+
+1. Add these environment variables in the hosting dashboard:
+
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+2. Build command:
+
+   ```bash
+   npm run build
+   ```
+
+3. Output directory:
+
+   ```text
+   dist
+   ```
+
+The included `vercel.json` rewrites all routes to `index.html`, which is needed for React Router browser routes.
