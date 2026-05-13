@@ -17,8 +17,37 @@ export interface EmailAuthResult {
 const EMAIL_VERIFICATION_ERROR =
   'Email verify nahi hua hai. Inbox me confirmation link open karke phir login karo.';
 
+const BLOCKED_EMAIL_DOMAINS = new Set([
+  '10minutemail.com',
+  'guerrillamail.com',
+  'mailinator.com',
+  'tempmail.com',
+  'temp-mail.org',
+  'yopmail.com',
+]);
+
 function isEmailVerified(user: User | null | undefined) {
   return Boolean(user?.email_confirmed_at);
+}
+
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
+function validateEmailAddress(email: string) {
+  const normalizedEmail = normalizeEmail(email);
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  if (!emailPattern.test(normalizedEmail)) {
+    throw new Error('Please enter a valid email address.');
+  }
+
+  const domain = normalizedEmail.split('@')[1];
+  if (BLOCKED_EMAIL_DOMAINS.has(domain)) {
+    throw new Error('Temporary/fake email addresses are not allowed.');
+  }
+
+  return normalizedEmail;
 }
 
 async function signOutSilently() {
@@ -50,8 +79,9 @@ async function upsertUserProfile(userId: string, displayName: string) {
 
 // Email Signup
 export async function signUpWithEmail(name: string, email: string, password: string): Promise<EmailAuthResult> {
+  const normalizedEmail = validateEmailAddress(email);
   const { data, error } = await supabase.auth.signUp({
-    email,
+    email: normalizedEmail,
     password,
     options: {
       data: {
@@ -72,8 +102,9 @@ export async function signUpWithEmail(name: string, email: string, password: str
 
 // Email Login
 export async function signInWithEmail(email: string, password: string): Promise<EmailAuthResult> {
+  const normalizedEmail = validateEmailAddress(email);
   const { data, error } = await supabase.auth.signInWithPassword({
-    email,
+    email: normalizedEmail,
     password,
   });
 

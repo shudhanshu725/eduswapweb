@@ -95,7 +95,7 @@ EduSwap uses Supabase Auth signup email flow.
 
 1. Go to Supabase Dashboard -> `Authentication` -> `Providers`.
 2. Enable `Email`.
-3. Keep `Confirm email` enabled.
+3. Keep `Confirm email` enabled. This is required so users cannot log in with an unverified or fake inbox.
 4. Go to `Authentication` -> `Email Templates` -> `Confirm signup`.
 5. Use a subject like:
 
@@ -114,7 +114,7 @@ EduSwap uses Supabase Auth signup email flow.
    <p>Thanks,<br />EduSwap Team</p>
    ```
 
-After signup, users must confirm their email before they can log in.
+After signup, users must confirm their email before they can log in. The app also validates email format and blocks common temporary email domains, but inbox confirmation is the real protection.
 
 ## Environment Variables
 
