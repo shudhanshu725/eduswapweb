@@ -114,7 +114,7 @@ EduSwap uses Supabase Auth signup email flow.
    <p>Thanks,<br />EduSwap Team</p>
    ```
 
-After signup, users must confirm their email before they can log in. The app also validates email format and blocks common temporary email domains, but inbox confirmation is the real protection.
+After signup, users must confirm their email before they can log in. Supabase may still show an unconfirmed Auth user before verification; that is normal. EduSwap does not create the user's app profile until the email is verified and the user can log in. The app also validates email format and blocks common temporary email domains, but inbox confirmation is the real protection.
 
 ## Environment Variables
 

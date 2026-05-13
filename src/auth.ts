@@ -92,7 +92,7 @@ export async function signUpWithEmail(name: string, email: string, password: str
   });
 
   if (error) throw error;
-  if (data.user?.id) {
+  if (data.session?.user && isEmailVerified(data.session.user)) {
     await upsertUserProfile(data.user.id, name);
   }
   return {
