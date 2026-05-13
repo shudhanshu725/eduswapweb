@@ -40,25 +40,26 @@ EduSwap uses Supabase Auth signup email flow.
 After this, every new signup gets the welcome + account-created email automatically.
 When `Confirm email` is enabled, signup will create the account and ask the user to verify their email before first login.
 
-## MERN Backend (New)
+## Supabase Setup
 
-A full backend scaffold is added at `server/` with:
-- JWT auth (`/api/auth`)
-- Listings (`/api/listings`)
-- Chat REST + Socket.IO (`/api/chats`)
+This project uses Supabase only. It does not need MongoDB, Express, JWT server auth, or a separate API server.
 
-### Backend setup
+1. Create a Supabase project.
+2. Copy `.env.example` to `.env.local`.
+3. Set:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+4. In Supabase SQL Editor, run `supabase/schema.sql`.
+5. In Supabase Dashboard -> `Authentication` -> `Providers`, enable Email auth.
 
-1. Copy env:
-   `cp server/.env.example server/.env`
-2. Set values in `server/.env`:
-   - `MONGO_URI`
-   - `JWT_ACCESS_SECRET`
-   - `JWT_REFRESH_SECRET`
-   - `CLIENT_URL=http://localhost:3000`
-3. Install packages:
-   `npm install`
-4. Run both API + frontend:
-   `npm run dev:mern`
-
-API default URL: `http://localhost:5000`
+The app expects these Supabase tables/storage resources:
+- `materials`
+- `downloads`
+- `swap_requests`
+- `messages`
+- `purchases`
+- `contact_messages`
+- `user_profiles`
+- Storage bucket: `materials`
