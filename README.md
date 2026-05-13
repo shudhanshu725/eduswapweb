@@ -92,7 +92,7 @@ The schema creates these required resources:
 
 ## Auth Email Setup
 
-EduSwap uses Supabase Auth signup OTP flow.
+EduSwap uses Supabase Auth signup email confirmation flow.
 
 1. Go to Supabase Dashboard -> `Authentication` -> `Providers`.
 2. Enable `Email`.
@@ -101,7 +101,7 @@ EduSwap uses Supabase Auth signup OTP flow.
 5. Use a subject like:
 
    ```text
-   Welcome to EduSwap - Your OTP code
+   Welcome to EduSwap - Confirm your account
    ```
 
 6. Example email body:
@@ -109,15 +109,15 @@ EduSwap uses Supabase Auth signup OTP flow.
    ```html
    <h2>Welcome to EduSwap</h2>
    <p>Hello,</p>
-   <p>Your EduSwap verification code is:</p>
-   <h1>{{ .Token }}</h1>
-   <p>Enter this OTP in the EduSwap signup screen to verify your account.</p>
+   <p>Your account has been created successfully.</p>
+   <p>Please confirm your email by clicking the button below.</p>
+   <p><a href="{{ .ConfirmationURL }}">Confirm my account</a></p>
    <p>Thanks,<br />EduSwap Team</p>
    ```
 
-Use `{{ .Token }}` instead of `{{ .ConfirmationURL }}`. Supabase sends a clickable confirmation link when the template uses `{{ .ConfirmationURL }}`. It sends a one-time code when the template uses `{{ .Token }}`.
+Use `{{ .ConfirmationURL }}` so Supabase sends a clickable confirmation link.
 
-After signup, users must enter the OTP before they can log in. Supabase may still show an unconfirmed Auth user before OTP verification; that is normal. EduSwap does not create the user's app profile until the OTP is verified. The app only allows Gmail addresses and also validates email format, but inbox OTP confirmation is the real protection.
+After signup, users must confirm their email before they can log in. Supabase may still show an unconfirmed Auth user before verification; that is normal. EduSwap does not create the user's app profile until the email is verified and the user can log in. The app only allows Gmail addresses and also validates email format, but inbox confirmation is the real protection.
 
 ## Environment Variables
 

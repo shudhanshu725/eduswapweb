@@ -15,7 +15,7 @@ export interface EmailAuthResult {
 }
 
 const EMAIL_VERIFICATION_ERROR =
-  'Email verify nahi hua hai. Inbox me OTP code verify karke phir login karo.';
+  'Email verify nahi hua hai. Inbox me confirmation link open karke phir login karo.';
 
 const BLOCKED_EMAIL_DOMAINS = new Set([
   '10minutemail.com',
@@ -103,34 +103,6 @@ export async function signUpWithEmail(name: string, email: string, password: str
   }
   return {
     requiresEmailConfirmation: !data.session,
-  };
-}
-
-// Verify Signup OTP
-export async function verifySignupOtp(email: string, token: string, displayName: string): Promise<EmailAuthResult> {
-  const normalizedEmail = validateEmailAddress(email);
-  const cleanToken = token.trim();
-
-  if (!/^\d{6}$/.test(cleanToken)) {
-    throw new Error('Please enter the 6 digit OTP sent to your email.');
-  }
-
-  const { data, error } = await supabase.auth.verifyOtp({
-    email: normalizedEmail,
-    token: cleanToken,
-    type: 'signup',
-  });
-
-  if (error) throw error;
-  if (!isEmailVerified(data.user)) {
-    await signOutSilently();
-    throw new Error(EMAIL_VERIFICATION_ERROR);
-  }
-  if (data.user?.id) {
-    await upsertUserProfile(data.user.id, displayName);
-  }
-  return {
-    requiresEmailConfirmation: false,
   };
 }
 
